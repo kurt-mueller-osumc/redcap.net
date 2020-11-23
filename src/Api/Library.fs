@@ -1,9 +1,14 @@
 ﻿namespace Api
 
-module Common =
+module Identifiers =
     type TccId = TccId of string
     type AvatarId = AvatarId of string
     type MRN = MRN of int
+
+    type Identifiers =
+        { TccId: TccId
+          AvatarId: AvatarId option
+          MRN: MRN }
 
 module Sex =
     type Sex =
@@ -196,7 +201,7 @@ module VitalStatus =
         | Dead -> "D"
 
 module Patient =
-    open Common
+    open Identifiers
     open Sex
     open Race
     open VitalStatus
@@ -204,10 +209,7 @@ module Patient =
     type BirthDate = BirthDate of string
 
     type Patient =
-        { MRN: MRN
-          TccId: TccId
-          AvatarId: AvatarId option
-          Gender: Sex
+        { Identifiers: Identifiers
           Sex: Sex
           Race: Race
           BirthDate: BirthDate
