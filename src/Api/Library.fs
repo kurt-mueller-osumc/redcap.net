@@ -5,8 +5,8 @@ module Common =
     type AvatarId = AvatarId of string
     type MRN = MRN of int
 
-module Gender =
-    type Gender =
+module Sex =
+    type Sex =
         private
         | Male
         | Female
@@ -197,7 +197,7 @@ module VitalStatus =
 
 module Patient =
     open Common
-    open Gender
+    open Sex
     open Race
     open VitalStatus
 
@@ -207,8 +207,8 @@ module Patient =
         { MRN: MRN
           TccId: TccId
           AvatarId: AvatarId option
-          Gender: Gender
+          Gender: Sex
+          Sex: Sex
           Race: Race
           BirthDate: BirthDate
           VitalStatus: VitalStatus }
-
