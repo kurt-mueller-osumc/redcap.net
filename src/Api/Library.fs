@@ -23,14 +23,33 @@ module MRN =
     | Provided of int
     | Withdrawn
 
-    let fromString input =
+    /// Parses inputs for MRNs.
+    /// Inputs must be either a number or the value "Withdrawn".
+    let parse input =
         try
             Ok <| Provided (input |> int)
         with
-            | :? System.FormatException as e ->
+            | :? FormatException as e ->
                 match input with
                 | "Withdrawn" -> Ok Withdrawn
                 | _ -> Error { Attribute = "mrn"; Input = input; Message = e.Message }
+
+module TccId =
+    open Parse
+    open FParsec
+
+    type TccId = TccId of string
+
+    /// Parse inputs for TCC ID.
+    /// Inputs must start with a "P" and then by follwed by digits.
+    let parse input =
+        let pFollowedByNumbers = pchar 'P' .>>. manyChars digit
+
+        match run pFollowedByNumbers input with
+        | Success (res, _, _) -> Result.Ok <| TccId input
+        | Failure (err, _, _) -> Result.Error {  Attribute = "tccId"; Input = input; Message = err}
+
+
 
 module Identifiers =
     open MRN
