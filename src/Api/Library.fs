@@ -1,14 +1,54 @@
 ﻿namespace Api
 
+open System
+
+module Parse =
+    type ParseError = {
+        Attribute: string
+        Input: string
+        Message: string
+    }
+
+module Optional =
+    let map f input =
+        if String.IsNullOrEmpty(input) then
+            None
+        else
+            Some <| f input
+
+module MRN =
+    open Parse
+
+    type MRN =
+    | Provided of int
+    | Withdrawn
+
+    let fromString input =
+        try
+            Ok <| Provided (input |> int)
+        with
+            | :? System.FormatException as e ->
+                match input with
+                | "Withdrawn" -> Ok Withdrawn
+                | _ -> Error { Attribute = "mrn"; Input = input; Message = e.Message }
+
 module Identifiers =
+    open MRN
+
     type TccId = TccId of string
     type AvatarId = AvatarId of string
-    type MRN = MRN of int
 
     type Identifiers =
         { TccId: TccId
           AvatarId: AvatarId option
           MRN: MRN }
+
+    // let parse tccId, avatarId, mrn =
+    //     {
+    //         TccId = tccId
+    //         AvatarId = Optional.map AvatarId AvatarId
+    //     }
+
 
 module Sex =
     type Sex =
@@ -214,3 +254,18 @@ module Patient =
           Race: Race
           BirthDate: BirthDate
           VitalStatus: VitalStatus }
+
+module PrimaryDiagnosisSite =
+    type PrimaryDiagnosisSite =
+        private
+        | ``C00|0 - External upper lip``
+
+
+module Cancer =
+    open Identifiers
+    type CancerId = CancerId of string
+
+    type Cancer =
+        {
+            Identifiers: Identifiers
+        }
