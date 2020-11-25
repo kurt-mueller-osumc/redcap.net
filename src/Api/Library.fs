@@ -50,6 +50,21 @@ module TccId =
         | Failure (err, _, _) -> Result.Error {  Attribute = "tccId"; Input = input; Message = err}
 
 
+module AvatarId =
+    open Parse
+    open FParsec
+
+    type AvatarId = AvatarId of string
+
+    /// Parse inputs for Avatar ID.
+    /// Inputs must start with an "A" and then be followed by digits
+    let parse input =
+        let aFollowedByNumbers = pchar 'A' .>>. manyChars digit
+
+        match run aFollowedByNumbers input with
+        | Success (res, _, _) -> Result.Ok <| AvatarId input
+        | Failure (err, _, _) -> Result.Error { Attribute = "avatarId"; Input = input; Message = err}
+
 
 module Identifiers =
     open MRN
@@ -61,13 +76,6 @@ module Identifiers =
         { TccId: TccId
           AvatarId: AvatarId option
           MRN: MRN }
-
-    // let parse tccId, avatarId, mrn =
-    //     {
-    //         TccId = tccId
-    //         AvatarId = Optional.map AvatarId AvatarId
-    //     }
-
 
 module Sex =
     type Sex =
